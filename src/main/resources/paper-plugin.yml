@@ -1,0 +1,4 @@
+name: HazeCore
+version: '1.0-SNAPSHOT'
+main: com.notpatch.hazeCore.HazeCore
+api-version: '1.21'
