@@ -1,10 +1,39 @@
-# User-specific stuff
-.idea/
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
+### IntelliJ IDEA ###
+.idea/
+*.iws
 *.iml
 *.ipr
-*.iws
 
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+# User-specific stuff
 # IntelliJ
 out/
 
@@ -44,7 +73,6 @@ hs_err_pid*
 .nfs*
 
 # General
-.DS_Store
 .AppleDouble
 .LSOverride
 
@@ -94,8 +122,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
-target/
 
 pom.xml.tag
 pom.xml.releaseBackup

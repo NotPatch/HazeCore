@@ -1,0 +1,11 @@
+database:
+  host: localhost
+  port: 3306
+  database: minecraft
+  username: root
+  password: ''
+  pool-size: 10
+  minimum-idle: 5
+  max-lifetime: 1800000
+  keepalive-time: 0
+  connection-timeout: 30000
