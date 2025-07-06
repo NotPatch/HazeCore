@@ -84,7 +84,7 @@ public class ModuleManager {
     public void enableModules() {
         for(HazeModule module : loadedModules.values()){
             module.onEnable();
-            NLogger.info("Modül: " + module.getClass().getSimpleName() + " aktif edildi!");
+            NLogger.info("Modül: " + module.getName() + " aktif edildi!");
         }
         loadedModules.values().forEach(HazeModule::onEnable);
         NLogger.info("Toplam " + loadedModules.size() + " adet modül aktif edildi.");
