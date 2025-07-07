@@ -33,6 +33,8 @@ public final class HazeCore extends JavaPlugin {
         saveDefaultConfig();
         saveConfig();
 
+        configManager = new ConfigManager(this);
+
         moduleManager = new ModuleManager(this);
         moduleManager.loadModules();
         moduleManager.enableModules();
@@ -42,10 +44,10 @@ public final class HazeCore extends JavaPlugin {
 
         cooldownManager = new CooldownManager();
 
-        configManager = new ConfigManager(this);
+
 
         if(!VaultHelper.setupEconomy()){
-            NLogger.warn("Vault bulunamadı, ekonomi işlemleri yapılamaz");
+            NLogger.warn("Vault not found, economy features disabled!");
         }
 
     }
