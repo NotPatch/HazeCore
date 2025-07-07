@@ -9,9 +9,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.net.URL;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 public class ModuleManager {
 
@@ -34,7 +36,7 @@ public class ModuleManager {
         File[] moduleFiles = moduleFolder.listFiles((dir, name) -> name.endsWith(".jar"));
         
         if (moduleFiles == null) {
-            NLogger.warn("Modül klasörü bulunamadı veya boş!");
+            NLogger.warn("Module folder is empty or invalid!");
             return;
         }
 
@@ -42,7 +44,7 @@ public class ModuleManager {
             try {
                 loadModule(moduleFile);
             } catch (Exception e) {
-                NLogger.error(moduleFile.getName() + " modül yüklenirken hata oluştu:" + e.getMessage());
+                NLogger.error("Module '" + moduleFile.getName() + "' could not be loaded!" + e.getMessage());
             }
         }
     }
@@ -54,7 +56,7 @@ public class ModuleManager {
 
         var moduleEntry = jarFile.getEntry("module.yml");
         if (moduleEntry == null) {
-            throw new Exception("module.yml bulunamadı!");
+            throw new Exception("module.yml don't found!");
         }
 
         YamlConfiguration moduleConfig = YamlConfiguration.loadConfiguration(
@@ -66,28 +68,40 @@ public class ModuleManager {
         String version = moduleConfig.getString("version");
 
         if (mainClass == null || moduleName == null) {
-            throw new Exception("Geçersiz module.yml yapılandırması!");
+            throw new Exception("Invalid module.yml file! main and name fields are required!");
         }
 
         Class<?> clazz = classLoader.loadClass(mainClass);
         if (!HazeModule.class.isAssignableFrom(clazz)) {
-            throw new Exception("Ana sınıf HazeModule'den türetilmemiş!");
+            throw new Exception("Main class is not a HazeModule class! Please check your module.yml file and try again!");
         }
 
         HazeModule module = (HazeModule) clazz.getDeclaredConstructor().newInstance();
         module.init(plugin, moduleConfig);
         
         loadedModules.put(moduleName, module);
-        NLogger.info(moduleName + " v" + version + " modülü başarıyla yüklendi!");
+        String moduleKey = moduleName + ":" + version;
+        NLogger.info("Module '" + moduleKey + "' loaded successfully!");
     }
 
     public void enableModules() {
-        for(HazeModule module : loadedModules.values()){
+
+        for (HazeModule module : loadedModules.values()) {
             module.onEnable();
-            NLogger.info("Modül: " + module.getName() + " aktif edildi!");
         }
+
+        List<String> moduleNames = loadedModules.values()
+                .stream()
+                .map(HazeModule::getName)
+                .collect(Collectors.toList());
+
+        if (!moduleNames.isEmpty()) {
+            String joinedNames = String.join(", ", moduleNames);
+            NLogger.info(" Loaded modules: " + joinedNames);
+        }
+
         loadedModules.values().forEach(HazeModule::onEnable);
-        NLogger.info("Toplam " + loadedModules.size() + " adet modül aktif edildi.");
+        NLogger.info("Total " + loadedModules.size() + " module loaded successfully.");
     }
 
     public void disableModules() {
