@@ -6,7 +6,7 @@
 
     <groupId>com.notpatch</groupId>
     <artifactId>hazecore</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>hazecore</name>
@@ -76,7 +76,6 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>5.0.1</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
