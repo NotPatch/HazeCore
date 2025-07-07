@@ -1,4 +1,6 @@
 database:
+  #MYSQL or SQLite
+  type: sqlite
   host: localhost
   port: 3306
   database: minecraft
