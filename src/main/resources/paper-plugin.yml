@@ -1,7 +1,7 @@
 name: HazeCore
-version: '1.0-SNAPSHOT'
+version: '1.0.3-SNAPSHOT'
 main: com.notpatch.hazeCore.HazeCore
 api-version: '1.21'
 
-libraries:
-  - com.zaxxer:HikariCP:5.0.1
+soft-depend: [Vault, LuckPerms]
+
