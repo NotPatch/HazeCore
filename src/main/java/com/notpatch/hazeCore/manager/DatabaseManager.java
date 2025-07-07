@@ -20,55 +20,67 @@ public class DatabaseManager {
     @Getter
     private HikariDataSource dataSource;
     private final ExecutorService executor;
-    private final HazeCore plugin;
+    private final HazeCore main;
     @Getter
     private boolean usingSQLite = false;
 
-    public DatabaseManager(HazeCore plugin) {
-        this.plugin = plugin;
+    public DatabaseManager(HazeCore main) {
+        this.main = main;
         this.executor = Executors.newFixedThreadPool(10);
     }
 
     public void connect() {
-        try {
-            connectToMySQL();
-        } catch (Exception e) {
-            NLogger.warn("MySQL bağlantısı başarısız oldu. SQLite'a geçiş yapılıyor...");
+        if(main.getConfig().getString("database.type", "sqlite").equalsIgnoreCase("mysql")){
+            if(!connectToMySQL()){
+                NLogger.warn("Unable to connect to MySQL database, falling back to SQLite.");
+            }else{
+                connectToMySQL();
+            }
+        }else{
             connectToSQLite();
         }
     }
 
-    private void connectToMySQL() {
-        ConfigurationSection dbConfig = plugin.getConfig().getConfigurationSection("database");
-        if (dbConfig == null) {
-            throw new IllegalStateException("Veritabanı yapılandırması bulunamadı!");
-        }
+    private boolean connectToMySQL() {
+        try {
+            ConfigurationSection dbConfig = main.getConfig().getConfigurationSection("database");
+            if (dbConfig == null) {
+                NLogger.warn("'database' section not found in config.yml!");
+                return false;
+            }
 
-        HikariConfig config = new HikariConfig();
-        
-        String host = dbConfig.getString("host", "localhost");
-        String database = dbConfig.getString("database", "minecraft");
-        String username = dbConfig.getString("username", "root");
-        String password = dbConfig.getString("password", "");
-        int port = dbConfig.getInt("port", 3306);
-        
-        String jdbcUrl = String.format("jdbc:mysql://%s:%d/%s", host, port, database);
-        config.setJdbcUrl(jdbcUrl);
-        config.setUsername(username);
-        config.setPassword(password);
-        
-        configureMySQLPool(config, dbConfig);
-        
-        dataSource = new HikariDataSource(config);
-        testConnection();
-        NLogger.info("MySQL bağlantısı başarıyla kuruldu!");
+            HikariConfig config = new HikariConfig();
+
+            String host = dbConfig.getString("host", "localhost");
+            String database = dbConfig.getString("database", "minecraft");
+            String username = dbConfig.getString("username", "root");
+            String password = dbConfig.getString("password", "");
+            int port = dbConfig.getInt("port", 3306);
+
+            String jdbcUrl = String.format("jdbc:mysql://%s:%d/%s", host, port, database);
+            config.setJdbcUrl(jdbcUrl);
+            config.setUsername(username);
+            config.setPassword(password);
+
+            configureMySQLPool(config, dbConfig);
+
+            dataSource = new HikariDataSource(config);
+            testConnection();
+
+            NLogger.info("Connected to MySQL");
+            return true;
+
+        } catch (Exception e) {
+            return false;
+        }
     }
+
 
     private void connectToSQLite() {
         try {
             Class.forName("org.sqlite.JDBC");
             
-            File dataFolder = plugin.getDataFolder();
+            File dataFolder = main.getDataFolder();
             if (!dataFolder.exists()) {
                 dataFolder.mkdirs();
             }
@@ -85,12 +97,10 @@ public class DatabaseManager {
             usingSQLite = true;
             
             testConnection();
-            NLogger.info("SQLite bağlantısı başarıyla kuruldu!");
-            
+            NLogger.info("Connected to SQLite");
+
         } catch (Exception e) {
-            NLogger.error("SQLite bağlantısı kurulamadı!");
-            NLogger.exception(e);
-            throw new RuntimeException(e);
+            NLogger.error("Unable to connect to SQLite database! Check your config.yml file for correct connection settings and try again. If the problem persists, contact the developer for support.!");
         }
     }
 
@@ -154,12 +164,10 @@ public class DatabaseManager {
     private void testConnection() {
         try (Connection conn = dataSource.getConnection()) {
             if (!conn.isValid(1000)) {
-                throw new SQLException("Veritabanı bağlantısı geçerli değil!");
+                NLogger.error("Database connection test failed!");
             }
         } catch (SQLException e) {
-            NLogger.error("Veritabanı bağlantı testi başarısız!");
-            NLogger.exception(e);
-            throw new RuntimeException(e);
+            NLogger.error("Database connection test failed!");
         }
     }
 
@@ -168,7 +176,7 @@ public class DatabaseManager {
             try (Connection conn = dataSource.getConnection()) {
                 return function.apply(conn);
             } catch (SQLException e) {
-                NLogger.error("Veritabanı işlemi başarısız!");
+                NLogger.error("Database exception:");
                 NLogger.exception(e);
                 throw new RuntimeException(e);
             }
