@@ -47,7 +47,7 @@ public abstract class HazeModule {
 
     public void saveResource(String resourcePath, boolean replace) {
         try {
-            InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
+            InputStream in = getClass().getClassLoader().getResourceAsStream("/" + resourcePath);
             if (in == null) {
                 throw new IllegalArgumentException("Resource " + resourcePath + " not found!");
             }
