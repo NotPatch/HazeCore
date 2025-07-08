@@ -1,11 +1,10 @@
 package com.notpatch.hazeCore.helper;
 
+import lombok.Getter;
 import net.luckperms.api.LuckPerms;
-import net.luckperms.api.model.data.DataMutateResult;
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
-import net.luckperms.api.node.NodeType;
 import net.luckperms.api.node.types.InheritanceNode;
 import net.luckperms.api.node.types.PermissionNode;
 import org.bukkit.Bukkit;
@@ -19,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class LuckPermsHelper {
+
+    @Getter
     private static LuckPerms api = null;
 
     public static boolean setupLuckPerms() {

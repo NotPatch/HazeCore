@@ -1,0 +1,9 @@
+name: HazeCore
+version: '1.0.4-SNAPSHOT'
+main: com.notpatch.hazeCore.HazeCore
+api-version: '1.21'
+
+depend:
+  - Vault
+  - LuckPerms
+

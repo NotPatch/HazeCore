@@ -54,7 +54,6 @@ public abstract class HazeModule {
 
             File outFile = new File(main.getDataFolder() + "/modules/" + getName(), resourcePath);
             if (!outFile.exists() || replace) {
-                // Dosyayı oluştur
                 outFile.getParentFile().mkdirs();
                 Files.copy(in, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }

@@ -1,7 +1,17 @@
 name: HazeCore
-version: '1.0.3-SNAPSHOT'
+version: '1.0.4-SNAPSHOT'
 main: com.notpatch.hazeCore.HazeCore
 api-version: '1.21'
 
-soft-depend: [Vault, LuckPerms]
+dependencies:
+  server:
+    LuckPerms:
+      load: BEFORE
+      required: true
+      join-classpath: true
+    Vault:
+      load: BEFORE
+      required: true
+      join-classpath: true
 
+loader: com.notpatch.hazeCore.loader.LibraryLoader
