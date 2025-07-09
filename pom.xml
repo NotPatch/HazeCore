@@ -6,7 +6,7 @@
 
     <groupId>com.notpatch</groupId>
     <artifactId>hazecore</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>hazecore</name>
@@ -42,6 +42,12 @@
                 </executions>
                 <configuration>
                     <minimizeJar>true</minimizeJar>
+                    <relocations>
+                        <relocation>
+                            <pattern>eu.okaeri</pattern>
+                            <shadedPattern>com.notpatch.shades</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
             </plugin>
         </plugins>
@@ -113,7 +119,6 @@
             <groupId>eu.okaeri</groupId>
             <artifactId>okaeri-configs-yaml-bukkit</artifactId>
             <version>5.0.9</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
