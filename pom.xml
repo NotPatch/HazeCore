@@ -6,7 +6,7 @@
 
     <groupId>com.notpatch</groupId>
     <artifactId>hazecore</artifactId>
-    <version>1.0.7-SNAPSHOT</version>
+    <version>1.0.8-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>hazecore</name>
@@ -40,15 +40,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <minimizeJar>true</minimizeJar>
-                    <relocations>
-                        <relocation>
-                            <pattern>eu.okaeri</pattern>
-                            <shadedPattern>com.notpatch.shades</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
             </plugin>
         </plugins>
         <resources>

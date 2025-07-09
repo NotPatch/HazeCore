@@ -1,5 +1,6 @@
 package com.notpatch.hazeCore.helper;
 
+import eu.okaeri.configs.OkaeriConfig;
 import lombok.Getter;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.group.Group;
