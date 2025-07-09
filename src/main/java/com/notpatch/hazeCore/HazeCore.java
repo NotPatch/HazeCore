@@ -3,7 +3,6 @@ package com.notpatch.hazeCore;
 import com.notpatch.hazeCore.command.ModuleBrigadierCommand;
 import com.notpatch.hazeCore.helper.LuckPermsHelper;
 import com.notpatch.hazeCore.helper.VaultHelper;
-import com.notpatch.hazeCore.manager.ConfigManager;
 import com.notpatch.hazeCore.manager.CooldownManager;
 import com.notpatch.hazeCore.manager.DatabaseManager;
 import com.notpatch.hazeCore.util.NLogger;
@@ -26,9 +25,6 @@ public final class HazeCore extends JavaPlugin {
     @Getter
     private CooldownManager cooldownManager;
 
-    @Getter
-    private ConfigManager configManager;
-
     @Override
     public void onEnable() {
         instance = this;
@@ -37,8 +33,6 @@ public final class HazeCore extends JavaPlugin {
         saveConfig();
 
         registerCommands();
-
-        configManager = new ConfigManager(this);
 
         moduleManager = new ModuleManager(this);
         moduleManager.loadAllModules();

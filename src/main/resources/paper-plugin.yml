@@ -1,5 +1,5 @@
 name: HazeCore
-version: '1.0.4-SNAPSHOT'
+version: ${project.version}
 main: com.notpatch.hazeCore.HazeCore
 api-version: '1.21'
 

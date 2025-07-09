@@ -26,23 +26,10 @@ public abstract class HazeModule {
     public void init(HazeCore main, YamlConfiguration moduleInfo) {
         this.main = main;
         this.moduleInfo = moduleInfo;
-        this.config = main.getConfigManager().createConfig(this, "config.yml");
-    }
-
-    protected void saveConfig() {
-        main.getConfigManager().saveConfig(this, "config.yml");
-    }
-
-    protected void reloadConfig() {
-        this.config = main.getConfigManager().createConfig(this, "config.yml");
     }
 
     protected FileConfiguration getConfig() {
         return this.config;
-    }
-
-    protected FileConfiguration createCustomConfig(String fileName) {
-        return main.getConfigManager().createConfig(this, fileName);
     }
 
     public void saveResource(String resourcePath, boolean replace) {

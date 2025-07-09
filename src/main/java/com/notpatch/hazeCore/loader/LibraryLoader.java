@@ -32,6 +32,7 @@ public class LibraryLoader implements PluginLoader {
 
         resolver.addRepository(new RemoteRepository.Builder("central", "default", getMavenUrl()).build());
         resolver.addRepository(new RemoteRepository.Builder("jitpack.io", "default", "https://jitpack.io").build());
+        resolver.addRepository(new RemoteRepository.Builder("okaeri-repo", "default", "https://storehouse.okaeri.eu/repository/maven-public/").build());
 
         classpathBuilder.addLibrary(resolver);
     }
