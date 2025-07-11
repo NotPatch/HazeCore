@@ -38,9 +38,6 @@ public final class HazeCore extends JavaPlugin {
         moduleManager.loadAllModules();
         moduleManager.enableAllModules();
 
-        databaseManager = new DatabaseManager(this);
-        databaseManager.connect();
-
         cooldownManager = new CooldownManager();
 
         if(!VaultHelper.setupEconomy()){

@@ -1,20 +1,20 @@
 package com.notpatch.hazeCore.model;
 
 import com.notpatch.hazeCore.HazeCore;
+import com.notpatch.hazeCore.configuration.DatabaseConfiguration;
+import eu.okaeri.configs.ConfigManager;
+import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
 import lombok.Getter;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
 public abstract class HazeModule {
     protected HazeCore main;
     protected YamlConfiguration moduleInfo;
-    protected FileConfiguration config;
+
+    @Getter
+    protected DatabaseConfiguration databaseConfig;
 
     @Getter
     private final String name;
@@ -26,27 +26,19 @@ public abstract class HazeModule {
     public void init(HazeCore main, YamlConfiguration moduleInfo) {
         this.main = main;
         this.moduleInfo = moduleInfo;
+        File databaseConfigFile = new File(folderPath(), "database.yml");
+
+        this.databaseConfig = ConfigManager.create(DatabaseConfiguration.class, (it) -> {
+            it.withConfigurer(new YamlBukkitConfigurer());
+            it.withBindFile(databaseConfigFile);
+            it.withRemoveOrphans(true);
+            it.saveDefaults();
+            it.load(true);
+        });
     }
 
-    protected FileConfiguration getConfig() {
-        return this.config;
-    }
-
-    public void saveResource(String resourcePath, boolean replace) {
-        try {
-            InputStream in = getClass().getClassLoader().getResourceAsStream("/" + resourcePath);
-            if (in == null) {
-                throw new IllegalArgumentException("Resource " + resourcePath + " not found!");
-            }
-
-            File outFile = new File(main.getDataFolder() + "/modules/" + getName(), resourcePath);
-            if (!outFile.exists() || replace) {
-                outFile.getParentFile().mkdirs();
-                Files.copy(in, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public String folderPath(){
+        return main.getDataFolder().getPath() + File.separator + "modules" + File.separator + name;
     }
 
 

@@ -1,17 +1,18 @@
 package com.notpatch.hazeCore.manager;
 
 import com.notpatch.hazeCore.HazeCore;
+import com.notpatch.hazeCore.model.HazeModule;
 import com.notpatch.hazeCore.util.NLogger;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
-import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,16 +22,18 @@ public class DatabaseManager {
     private HikariDataSource dataSource;
     private final ExecutorService executor;
     private final HazeCore main;
+    private final HazeModule module;
     @Getter
     private boolean usingSQLite = false;
 
-    public DatabaseManager(HazeCore main) {
-        this.main = main;
+    public DatabaseManager(HazeModule module) {
+        this.main = HazeCore.getInstance();
+        this.module = module;
         this.executor = Executors.newFixedThreadPool(10);
     }
 
     public void connect() {
-        if(main.getConfig().getString("database.type", "sqlite").equalsIgnoreCase("mysql")){
+        if(module.getDatabaseConfig().getDatabase().getType().equalsIgnoreCase("mysql")){
             if(!connectToMySQL()){
                 NLogger.warn("Unable to connect to MySQL database, falling back to SQLite.");
             }else{
@@ -43,31 +46,25 @@ public class DatabaseManager {
 
     private boolean connectToMySQL() {
         try {
-            ConfigurationSection dbConfig = main.getConfig().getConfigurationSection("database");
-            if (dbConfig == null) {
-                NLogger.warn("'database' section not found in config.yml!");
-                return false;
-            }
-
             HikariConfig config = new HikariConfig();
 
-            String host = dbConfig.getString("host", "localhost");
-            String database = dbConfig.getString("database", "minecraft");
-            String username = dbConfig.getString("username", "root");
-            String password = dbConfig.getString("password", "");
-            int port = dbConfig.getInt("port", 3306);
+            String host = module.getDatabaseConfig().getDatabase().getHost();
+            String database = module.getDatabaseConfig().getDatabase().getDatabase();
+            String username = module.getDatabaseConfig().getDatabase().getUsername();
+            String password = module.getDatabaseConfig().getDatabase().getPassword();
+            int port = module.getDatabaseConfig().getDatabase().getPort();
 
             String jdbcUrl = String.format("jdbc:mysql://%s:%d/%s", host, port, database);
             config.setJdbcUrl(jdbcUrl);
             config.setUsername(username);
             config.setPassword(password);
 
-            configureMySQLPool(config, dbConfig);
+            configureMySQLPool(config);
 
             dataSource = new HikariDataSource(config);
             testConnection();
 
-            NLogger.info("Connected to MySQL");
+            NLogger.info("Connected to MySQL | " + module.getName());
             return true;
 
         } catch (Exception e) {
@@ -79,13 +76,13 @@ public class DatabaseManager {
     private void connectToSQLite() {
         try {
             Class.forName("org.sqlite.JDBC");
-            
+
             File dataFolder = main.getDataFolder();
             if (!dataFolder.exists()) {
                 dataFolder.mkdirs();
             }
             
-            File dbFile = new File(dataFolder, "database.db");
+            File dbFile = new File(module.folderPath(), "database.db");
             
             HikariConfig config = new HikariConfig();
             config.setJdbcUrl("jdbc:sqlite:" + dbFile.getAbsolutePath());
@@ -104,12 +101,19 @@ public class DatabaseManager {
         }
     }
 
-    private void configureMySQLPool(HikariConfig config, ConfigurationSection dbConfig) {
-        config.setMaximumPoolSize(dbConfig.getInt("pool-size", 10));
-        config.setMinimumIdle(dbConfig.getInt("minimum-idle", 5));
-        config.setMaxLifetime(dbConfig.getLong("max-lifetime", 1800000));
-        config.setKeepaliveTime(dbConfig.getLong("keepalive-time", 0));
-        config.setConnectionTimeout(dbConfig.getLong("connection-timeout", 30000));
+    private void configureMySQLPool(HikariConfig config) {
+
+        int poolSize = module.getDatabaseConfig().getDatabase().getPoolSize();
+        int minimumIdle = module.getDatabaseConfig().getDatabase().getMinimumIdle();
+        long maxLifeTime = module.getDatabaseConfig().getDatabase().getMaximumLifetime();
+        int keepAliveTime = module.getDatabaseConfig().getDatabase().getKeepaliveTime();
+        long connectionTimeout = module.getDatabaseConfig().getDatabase().getConnectionTimeout();
+
+        config.setMaximumPoolSize(poolSize);
+        config.setMinimumIdle(minimumIdle);
+        config.setMaxLifetime(maxLifeTime);
+        config.setKeepaliveTime(keepAliveTime);
+        config.setConnectionTimeout(connectionTimeout);
         
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
@@ -127,7 +131,7 @@ public class DatabaseManager {
         config.setMaximumPoolSize(1);
         config.setMinimumIdle(1);
         config.setConnectionTimeout(30000);
-        config.setPoolName("hazelands");
+        config.setPoolName(module.getName().toLowerCase(Locale.ENGLISH));
     }
 
     //Example
