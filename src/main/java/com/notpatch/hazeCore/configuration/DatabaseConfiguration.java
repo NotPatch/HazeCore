@@ -21,7 +21,7 @@ public class DatabaseConfiguration extends OkaeriConfig {
     public static class Database extends OkaeriConfig {
 
         @Comment("Database type: mysql, sqlite")
-        private String type = "mysql";
+        private String type = "sqlite";
 
         @Comment("Database host")
         private String host = "localhost";
