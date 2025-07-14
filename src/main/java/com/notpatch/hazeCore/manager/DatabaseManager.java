@@ -33,13 +33,12 @@ public class DatabaseManager {
     }
 
     public void connect() {
-        if(module.getDatabaseConfig().getDatabase().getType().equalsIgnoreCase("mysql")){
-            if(!connectToMySQL()){
+        if(module.getDatabaseConfig().getDatabase().getType().equalsIgnoreCase("mysql")) {
+            if(!connectToMySQL()) {
                 NLogger.warn("Unable to connect to MySQL database, falling back to SQLite.");
-            }else{
-                connectToMySQL();
+                connectToSQLite();
             }
-        }else{
+        } else {
             connectToSQLite();
         }
     }
