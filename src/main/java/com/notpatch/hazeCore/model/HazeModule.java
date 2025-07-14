@@ -5,12 +5,19 @@ import com.notpatch.hazeCore.configuration.DatabaseConfiguration;
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class HazeModule {
-    protected HazeCore main;
+
+    @Getter
+    public HazeCore main;
     protected YamlConfiguration moduleInfo;
 
     @Getter
@@ -19,8 +26,22 @@ public abstract class HazeModule {
     @Getter
     private final String name;
 
+    private final List<Listener> registeredListeners = new ArrayList<>();
+
     public HazeModule() {
         this.name = getClass().getSimpleName();
+    }
+
+    public void registerListener(Listener listener) {
+        Bukkit.getPluginManager().registerEvents(listener, main);
+        registeredListeners.add(listener);
+    }
+
+    public void unregisterListeners() {
+        for(Listener listener : registeredListeners) {
+            HandlerList.unregisterAll(listener);
+        }
+        registeredListeners.clear();
     }
 
     public void init(HazeCore main, YamlConfiguration moduleInfo) {
@@ -41,7 +62,7 @@ public abstract class HazeModule {
         return main.getDataFolder().getPath() + File.separator + "modules" + File.separator + name;
     }
 
-
     public abstract void onEnable();
     public abstract void onDisable();
+
 }

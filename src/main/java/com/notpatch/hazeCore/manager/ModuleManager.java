@@ -1,7 +1,6 @@
 package com.notpatch.hazeCore.manager;
 
 import com.notpatch.hazeCore.HazeCore;
-import com.notpatch.hazeCore.helper.LuckPermsHelper;
 import com.notpatch.hazeCore.model.HazeModule;
 import com.notpatch.hazeCore.util.NLogger;
 import lombok.Getter;
@@ -124,7 +123,9 @@ public class ModuleManager {
     public void unloadModule(String moduleName) {
         HazeModule module = loadedModules.get(moduleName);
         if (module != null) {
+            module.unregisterListeners();
             module.onDisable();
+
             loadedModules.remove(moduleName);
             NLogger.info("Module '" + moduleName + "' unloaded successfully.");
         } else {
