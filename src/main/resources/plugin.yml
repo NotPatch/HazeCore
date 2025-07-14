@@ -6,4 +6,5 @@ api-version: '1.21'
 depend:
   - Vault
   - LuckPerms
+  - PlaceholderAPI
 
