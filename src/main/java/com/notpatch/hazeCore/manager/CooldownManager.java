@@ -14,16 +14,15 @@ public class CooldownManager {
     private final Cache<String, Cache<UUID, Long>> cooldownMap;
     
     public CooldownManager() {
-        // Ana cache: Her cooldown türü için ayrı bir cache tutar
         this.cooldownMap = CacheBuilder.newBuilder()
-                .expireAfterAccess(1, TimeUnit.HOURS) // Kullanılmayan cooldown türleri 1 saat sonra temizlenir
+                .expireAfterAccess(1, TimeUnit.HOURS)
                 .build();
     }
 
     public void setCooldown(String key, Player player, long duration, TimeUnit timeUnit) {
         Cache<UUID, Long> cooldowns = cooldownMap.asMap().computeIfAbsent(key, k -> 
             CacheBuilder.newBuilder()
-                    .expireAfterWrite(duration * 2, timeUnit) // Otomatik temizleme
+                    .expireAfterWrite(duration * 2, timeUnit)
                     .build()
         );
         

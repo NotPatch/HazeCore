@@ -4,7 +4,6 @@ import com.notpatch.hazeCore.command.ModuleBrigadierCommand;
 import com.notpatch.hazeCore.helper.LuckPermsHelper;
 import com.notpatch.hazeCore.helper.VaultHelper;
 import com.notpatch.hazeCore.manager.CooldownManager;
-import com.notpatch.hazeCore.manager.DatabaseManager;
 import com.notpatch.hazeCore.util.NLogger;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
@@ -18,9 +17,6 @@ public final class HazeCore extends JavaPlugin {
 
     @Getter
     private ModuleManager moduleManager;
-
-    @Getter
-    private DatabaseManager databaseManager;
 
     @Getter
     private CooldownManager cooldownManager;
