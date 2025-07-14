@@ -13,5 +13,9 @@ dependencies:
       load: BEFORE
       required: true
       join-classpath: true
+    PlaceholderAPI:
+      load: BEFORE
+      required: true
+      join-classpath: true
 
 loader: com.notpatch.hazeCore.loader.LibraryLoader
